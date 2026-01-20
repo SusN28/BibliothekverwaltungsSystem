@@ -1,0 +1,15 @@
+﻿<Page x:Class="BibliothekVerwaltungsSytem.AdminPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:BibliothekVerwaltungsSytem"
+      mc:Ignorable="d"
+      Title="AdminPage" Height="450" Width="800">
+    <Grid Background="#F8F9FA">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Admin-Panel" FontSize="48" FontWeight="Bold" Foreground="#E74C3C" HorizontalAlignment="Center"/>
+            <TextBlock Text="Verwalte Bücher und User." FontSize="24" Foreground="#7F8C8D" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        </StackPanel>
+    </Grid>
+</Page>

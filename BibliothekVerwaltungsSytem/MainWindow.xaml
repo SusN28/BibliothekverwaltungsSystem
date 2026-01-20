@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 <Grid Background="#F8F9FA">
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="320">
-        
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="320" x:Name="loginPanel">
         <!-- Titel -->
         <TextBlock Text="Login" 
                    FontSize="36" 
@@ -16,7 +15,6 @@
                    Foreground="#2C3E50" 
                    HorizontalAlignment="Center" 
                    Margin="0,0,0,50"/>
-
         <!-- Username Label + Feld -->
         <TextBlock Text="Username" 
                    FontSize="14" 
@@ -30,7 +28,6 @@
                  BorderBrush="#BDC3C7"
                  BorderThickness="1"
                  VerticalContentAlignment="Center"/>
-
         <!-- Password Label + Feld -->
         <TextBlock Text="Password" 
                    FontSize="14" 
@@ -44,7 +41,6 @@
                      BorderBrush="#BDC3C7"
                      BorderThickness="1"
                      VerticalContentAlignment="Center"/>
-
         <!-- Login Button -->
         <Button Name="btnLogin" 
                 Content="Login" 
@@ -57,7 +53,6 @@
                 BorderThickness="0"
                 HorizontalAlignment="Center"
                 Margin="0,0,0,20"/>
-
         <!-- Forgot Password -->
         <TextBlock Text="Forgot Password?" 
                    FontSize="12" 
@@ -65,8 +60,11 @@
                    HorizontalAlignment="Center"
                    Cursor="Hand"/>
     </StackPanel>
+    <!-- Frame für Pages (unsichtbar bis Login) -->
+    <Frame x:Name="mainFrame" 
+           NavigationUIVisibility="Hidden" 
+           Margin="0" 
+           Visibility="Collapsed"/>
 </Grid>
-
-
 
 </Window>
