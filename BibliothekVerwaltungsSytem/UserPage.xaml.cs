@@ -1,11 +1,18 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
-namespace BibliothekVerwaltungsSytem;
-
-public partial class UserPage : Page
+namespace BibliothekVerwaltungsSytem
 {
-    public UserPage()
+    public partial class UserPage : Page
     {
-        InitializeComponent();
+        public UserPage()
+        {
+            InitializeComponent();
+        }
+
+        private void WeiterButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new InventarPage());
+        }
     }
 }

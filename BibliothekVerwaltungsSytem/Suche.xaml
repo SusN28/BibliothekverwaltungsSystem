@@ -1,0 +1,86 @@
+﻿<Page x:Class="BibliothekVerwaltungsSytem.SuchePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:BibliothekVerwaltungsSytem"
+      mc:Ignorable="d"
+      Title="SuchePage">
+
+    <Grid Background="#F8F9FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Tab-Navigation -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#BDC3C7" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+                <Button Content="DEIN INVENTAR"
+                        Width="180"
+                        Height="50"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Background="#ECF0F1"
+                        Foreground="#7F8C8D"
+                        BorderThickness="0"
+                        Margin="0,0,4,0"
+                        Cursor="Hand"
+                        Click="BtnInventar_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Content="Suche"
+                        Width="180"
+                        Height="50"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Background="#3498DB"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="BtnSuche_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Platzhalter für Suche -->
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Suche-Funktion" 
+                       FontSize="32" 
+                       FontWeight="Bold"
+                       Foreground="#7F8C8D"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Kommt bald..." 
+                       FontSize="18" 
+                       Foreground="#BDC3C7"
+                       HorizontalAlignment="Center"
+                       Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</Page>
