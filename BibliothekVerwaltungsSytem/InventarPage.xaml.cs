@@ -8,18 +8,16 @@ namespace BibliothekVerwaltungsSytem
         public InventarPage()
         {
             InitializeComponent();
-            LoadDemoData();
+            LoadInventar();
         }
 
-        private void LoadDemoData()
+        private void LoadInventar()
         {
-            // Demo-Daten für Test
-            var buecher = new[]
-            {
-                new { Autor = "J.K. Rowling", Titel = "Harry Potter und der Stein der Weisen", Erscheinungsjahr = "1997", AusgeliehenAm = "10.01.2026", AusgeliehenBis = "24.01.2026" },
-                new { Autor = "George Orwell", Titel = "1984", Erscheinungsjahr = "1949", AusgeliehenAm = "12.01.2026", AusgeliehenBis = "26.01.2026" }
-            };
-            dgBuecher.ItemsSource = buecher;
+            // Daten aus der Datenbank laden
+            var ausleihen = Database.LoadUserInventar();
+            
+            // An DataGrid binden
+            dgBuecher.ItemsSource = ausleihen;
         }
 
         private void BtnInventar_Click(object sender, RoutedEventArgs e)
