@@ -1,0 +1,235 @@
+﻿<Window x:Class="BibliothekVerwaltungsSytem.BuchBearbeitenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Buch bearbeiten"
+        Width="520" Height="700"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F8F9FA">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock x:Name="TxtTitel"
+                       FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+            <TextBlock x:Name="TxtSubtitel"
+                       FontSize="13" Foreground="#7F8C8D" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Formular -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- Titel -->
+                <TextBlock Text="Titel" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <TextBox x:Name="TxtBuchTitel" FontSize="14" Padding="10,8"
+                         Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <!-- Autor -->
+                <TextBlock Text="Autor" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <ComboBox x:Name="CmbAutor" FontSize="14" Padding="10,8"
+                          Margin="0,0,0,14" BorderBrush="#D5D8DC"
+                          DisplayMemberPath="Name"/>
+
+                <!-- Kategorie -->
+                <TextBlock Text="Kategorie" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <ComboBox x:Name="CmbKategorie" FontSize="14" Padding="10,8"
+                          Margin="0,0,0,14" BorderBrush="#D5D8DC"
+                          DisplayMemberPath="Name"/>
+
+                <!-- ISBN -->
+                <TextBlock Text="ISBN" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <TextBox x:Name="TxtIsbn" FontSize="14" Padding="10,8"
+                         Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <!-- Erscheinungsjahr + Verlag -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Erscheinungsjahr" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtErscheinungsjahr" FontSize="14" Padding="10,8"
+                                 BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Verlag" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtVerlag" FontSize="14" Padding="10,8"
+                                 BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Seitenzahl + Sprache -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Seitenzahl" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtSeitenzahl" FontSize="14" Padding="10,8"
+                                 BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Sprache" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtSprache" FontSize="14" Padding="10,8"
+                                 BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Anzahl Exemplare -->
+                <TextBlock Text="Anzahl Exemplare" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <TextBox x:Name="TxtAnzahlExemplare" FontSize="14" Padding="10,8"
+                         Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <!-- Beschreibung -->
+                <TextBlock Text="Beschreibung (optional)" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                <TextBox x:Name="TxtBeschreibung" FontSize="14" Padding="10,8"
+                         Margin="0,0,0,4" BorderBrush="#D5D8DC" BorderThickness="1"
+                         TextWrapping="Wrap" Height="80" AcceptsReturn="True">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Abbrechen"
+                    FontSize="14" FontWeight="SemiBold"
+                    Foreground="#7F8C8D" Background="#ECF0F1"
+                    BorderThickness="0" Padding="0,12"
+                    Cursor="Hand" Click="BtnAbbrechen_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Grid.Column="2" Content="Speichern"
+                    FontSize="14" FontWeight="Bold"
+                    Foreground="White" BorderThickness="0" Padding="0,12"
+                    Cursor="Hand" Click="BtnSpeichern_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#E74C3C"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C0392B"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace BibliothekVerwaltungsSytem
 {
-    internal class Database
+    public class Database
     {
         public const string connectionString =
             "server=mysql.pb.bib.de;uid=pba3h24age;pwd=2dMzNXSWA54s;database=pba3h24age";
@@ -270,6 +270,286 @@ namespace BibliothekVerwaltungsSytem
                 return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
             }
         }
+        
+        /// <summary>
+/// Aktualisiert die Daten eines Users.
+/// Passwort wird nur geaendert wenn nicht leer.
+/// </summary>
+    public static LoginResult UpdateUser(int userId, string vorname, string nachname,
+        string username, string email, string neuesPasswort, string rolle)
+    {
+        try
+        {
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+
+            // Prüfen ob Username schon von jemand anderem verwendet wird
+            using var checkCmd = new MySqlCommand(
+                "SELECT COUNT(*) FROM users WHERE username = @username AND user_id != @userId",
+                connection);
+            checkCmd.Parameters.AddWithValue("@username", username);
+            checkCmd.Parameters.AddWithValue("@userId", userId);
+            if ((long)checkCmd.ExecuteScalar() > 0)
+                return new LoginResult { Success = false, Error = "Benutzername wird bereits verwendet!" };
+
+            // SQL je nachdem ob Passwort geändert wird oder nicht
+            string sql = string.IsNullOrEmpty(neuesPasswort)
+                ? @"UPDATE users SET vorname=@vorname, nachname=@nachname,
+                    username=@username, email=@email, rolle=@rolle
+                    WHERE user_id=@userId"
+                : @"UPDATE users SET vorname=@vorname, nachname=@nachname,
+                    username=@username, email=@email, rolle=@rolle,
+                    password_hash=@hash
+                    WHERE user_id=@userId";
+
+            using var cmd = new MySqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@vorname",  vorname);
+            cmd.Parameters.AddWithValue("@nachname", nachname);
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.Parameters.AddWithValue("@email",    string.IsNullOrEmpty(email) ? DBNull.Value : email);
+            cmd.Parameters.AddWithValue("@rolle",    rolle);
+            cmd.Parameters.AddWithValue("@userId",   userId);
+
+            if (!string.IsNullOrEmpty(neuesPasswort))
+                cmd.Parameters.AddWithValue("@hash",
+                    BCrypt.Net.BCrypt.HashPassword(neuesPasswort, workFactor: 12));
+
+            cmd.ExecuteNonQuery();
+            return new LoginResult { Success = true };
+        }
+        catch (MySqlException ex)
+        {
+            return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+        }
+    }
+
+        // ── Modelle ────────────────────────────────────────────────
+public class BuchInfo
+{
+    public int    BuchId          { get; set; }
+    public string Titel           { get; set; } = "";
+    public string Isbn            { get; set; } = "";
+    public int    AutorId         { get; set; }
+    public string AutorName       { get; set; } = "";
+    public int?   KategorieId     { get; set; }
+    public string KategorieName   { get; set; } = "";
+    public string Erscheinungsjahr { get; set; } = "";
+    public string Verlag          { get; set; } = "";
+    public string Seitenzahl      { get; set; } = "";
+    public string Sprache         { get; set; } = "Deutsch";
+    public int    AnzahlExemplare { get; set; }
+    public int    Verfuegbar      { get; set; }
+    public string Beschreibung    { get; set; } = "";
+}
+
+public class AutorInfo
+{
+    public int    AutorId { get; set; }
+    public string Name    { get; set; } = "";
+}
+
+public class KategorieInfo
+{
+    public int    KategorieId { get; set; }
+    public string Name        { get; set; } = "";
+}
+
+// ── Methoden ───────────────────────────────────────────────
+
+public static ObservableCollection<BuchInfo> LoadAlleBuecher()
+{
+    var liste = new ObservableCollection<BuchInfo>();
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(@"
+            SELECT b.buch_id, b.titel, IFNULL(b.isbn,'') AS isbn,
+                   b.autor_id,
+                   CONCAT(a.vorname, ' ', a.nachname) AS autor_name,
+                   b.kategorie_id,
+                   IFNULL(k.name,'') AS kategorie_name,
+                   IFNULL(b.erscheinungsjahr,'') AS erscheinungsjahr,
+                   IFNULL(b.verlag,'') AS verlag,
+                   IFNULL(b.seitenzahl,'') AS seitenzahl,
+                   IFNULL(b.sprache,'Deutsch') AS sprache,
+                   b.anzahl_exemplare, b.verfuegbar,
+                   IFNULL(b.beschreibung,'') AS beschreibung
+            FROM buecher b
+            JOIN autoren a ON b.autor_id = a.autor_id
+            LEFT JOIN kategorien k ON b.kategorie_id = k.kategorie_id
+            ORDER BY b.titel", connection);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            liste.Add(new BuchInfo
+            {
+                BuchId           = reader.GetInt32("buch_id"),
+                Titel            = reader.GetString("titel"),
+                Isbn             = reader.GetString("isbn"),
+                AutorId          = reader.GetInt32("autor_id"),
+                AutorName        = reader.GetString("autor_name"),
+                KategorieId      = reader.IsDBNull(reader.GetOrdinal("kategorie_id"))
+                                   ? null : reader.GetInt32("kategorie_id"),
+                KategorieName    = reader.GetString("kategorie_name"),
+                Erscheinungsjahr = reader.GetString("erscheinungsjahr"),
+                Verlag           = reader.GetString("verlag"),
+                Seitenzahl       = reader.GetString("seitenzahl"),
+                Sprache          = reader.GetString("sprache"),
+                AnzahlExemplare  = reader.GetInt32("anzahl_exemplare"),
+                Verfuegbar       = reader.GetInt32("verfuegbar"),
+                Beschreibung     = reader.GetString("beschreibung")
+            });
+        }
+    }
+    catch (MySqlException ex)
+    {
+        MessageBox.Show($"Fehler: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+    return liste;
+}
+
+public static ObservableCollection<AutorInfo> LoadAlleAutoren()
+{
+    var liste = new ObservableCollection<AutorInfo>();
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(
+            "SELECT autor_id, CONCAT(vorname,' ',nachname) AS name FROM autoren ORDER BY nachname",
+            connection);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            liste.Add(new AutorInfo
+            {
+                AutorId = reader.GetInt32("autor_id"),
+                Name    = reader.GetString("name")
+            });
+    }
+    catch (MySqlException ex)
+    {
+        MessageBox.Show($"Fehler: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+    return liste;
+}
+
+public static ObservableCollection<KategorieInfo> LoadAlleKategorien()
+{
+    var liste = new ObservableCollection<KategorieInfo>();
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(
+            "SELECT kategorie_id, name FROM kategorien ORDER BY name", connection);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            liste.Add(new KategorieInfo
+            {
+                KategorieId = reader.GetInt32("kategorie_id"),
+                Name        = reader.GetString("name")
+            });
+    }
+    catch (MySqlException ex)
+    {
+        MessageBox.Show($"Fehler: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+    return liste;
+}
+
+public static LoginResult CreateBuch(string titel, string isbn, int autorId, int? kategorieId,
+    string jahr, string verlag, string seiten, string sprache, int exemplare, string beschreibung)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(@"
+            INSERT INTO buecher
+                (titel, isbn, autor_id, kategorie_id, erscheinungsjahr,
+                 verlag, seitenzahl, sprache, anzahl_exemplare, verfuegbar, beschreibung)
+            VALUES
+                (@titel, @isbn, @autorId, @kategorieId, @jahr,
+                 @verlag, @seiten, @sprache, @exemplare, @exemplare, @beschreibung)",
+            connection);
+
+        cmd.Parameters.AddWithValue("@titel",      titel);
+        cmd.Parameters.AddWithValue("@isbn",       string.IsNullOrEmpty(isbn) ? DBNull.Value : isbn);
+        cmd.Parameters.AddWithValue("@autorId",    autorId);
+        cmd.Parameters.AddWithValue("@kategorieId", kategorieId.HasValue ? kategorieId.Value : DBNull.Value);
+        cmd.Parameters.AddWithValue("@jahr",       string.IsNullOrEmpty(jahr) ? DBNull.Value : jahr);
+        cmd.Parameters.AddWithValue("@verlag",     string.IsNullOrEmpty(verlag) ? DBNull.Value : verlag);
+        cmd.Parameters.AddWithValue("@seiten",     string.IsNullOrEmpty(seiten) ? DBNull.Value : seiten);
+        cmd.Parameters.AddWithValue("@sprache",    string.IsNullOrEmpty(sprache) ? "Deutsch" : sprache);
+        cmd.Parameters.AddWithValue("@exemplare",  exemplare);
+        cmd.Parameters.AddWithValue("@beschreibung", string.IsNullOrEmpty(beschreibung) ? DBNull.Value : beschreibung);
+
+        cmd.ExecuteNonQuery();
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
+public static LoginResult UpdateBuch(int buchId, string titel, string isbn, int autorId,
+    int? kategorieId, string jahr, string verlag, string seiten,
+    string sprache, int exemplare, string beschreibung)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(@"
+            UPDATE buecher SET
+                titel=@titel, isbn=@isbn, autor_id=@autorId,
+                kategorie_id=@kategorieId, erscheinungsjahr=@jahr,
+                verlag=@verlag, seitenzahl=@seiten, sprache=@sprache,
+                anzahl_exemplare=@exemplare, beschreibung=@beschreibung
+            WHERE buch_id=@buchId", connection);
+
+        cmd.Parameters.AddWithValue("@titel",      titel);
+        cmd.Parameters.AddWithValue("@isbn",       string.IsNullOrEmpty(isbn) ? DBNull.Value : isbn);
+        cmd.Parameters.AddWithValue("@autorId",    autorId);
+        cmd.Parameters.AddWithValue("@kategorieId", kategorieId.HasValue ? kategorieId.Value : DBNull.Value);
+        cmd.Parameters.AddWithValue("@jahr",       string.IsNullOrEmpty(jahr) ? DBNull.Value : jahr);
+        cmd.Parameters.AddWithValue("@verlag",     string.IsNullOrEmpty(verlag) ? DBNull.Value : verlag);
+        cmd.Parameters.AddWithValue("@seiten",     string.IsNullOrEmpty(seiten) ? DBNull.Value : seiten);
+        cmd.Parameters.AddWithValue("@sprache",    string.IsNullOrEmpty(sprache) ? "Deutsch" : sprache);
+        cmd.Parameters.AddWithValue("@exemplare",  exemplare);
+        cmd.Parameters.AddWithValue("@beschreibung", string.IsNullOrEmpty(beschreibung) ? DBNull.Value : beschreibung);
+        cmd.Parameters.AddWithValue("@buchId",     buchId);
+
+        cmd.ExecuteNonQuery();
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
+public static LoginResult DeleteBuch(int buchId)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(
+            "DELETE FROM buecher WHERE buch_id = @buchId", connection);
+        cmd.Parameters.AddWithValue("@buchId", buchId);
+        cmd.ExecuteNonQuery();
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
+        
 
         /// <summary>
         /// Lädt alle User aus der Datenbank (ohne password_hash).
@@ -306,6 +586,10 @@ namespace BibliothekVerwaltungsSytem
             return liste;
         }
     }
+    
+    
+    
 
+    
     
 }

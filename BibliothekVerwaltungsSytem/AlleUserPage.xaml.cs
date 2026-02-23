@@ -89,4 +89,22 @@ public partial class AlleUserPage : Page
     {
         // Schon auf der Seite
     }
+    
+    private void BtnUserBearbeiten_Click(object sender, RoutedEventArgs e)
+    {
+        int userId = (int)((Button)sender).Tag;
+        var user = _alleUser.FirstOrDefault(u => u.UserId == userId);
+        if (user == null) return;
+
+        var fenster = new BenutzerBearbeitenWindow(user);
+        fenster.ShowDialog(); // blockiert bis Fenster geschlossen
+
+        // Falls gespeichert wurde → Liste neu laden
+        if (fenster.Gespeichert)
+            LadeAlleUser();
+    }
+
+    private void BtnTabBuecher_Click(object sender, RoutedEventArgs e)
+        => NavigationService?.Navigate(new BuecherVerwaltenPage());
+
 }

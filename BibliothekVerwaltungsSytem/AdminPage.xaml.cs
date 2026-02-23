@@ -75,4 +75,8 @@ public partial class AdminPage : Page
         TxtPasswort.Password   = "";
         CmbRolle.SelectedIndex = 0;
     }
+    
+    private void BtnTabBuecher_Click(object sender, RoutedEventArgs e)
+        => NavigationService?.Navigate(new BuecherVerwaltenPage());
+
 }
