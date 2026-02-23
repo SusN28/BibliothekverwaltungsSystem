@@ -9,11 +9,13 @@
 
     <Grid Background="#F8F9FA">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Willkommen, User!" 
-                       FontSize="48" 
-                       FontWeight="Bold" 
-                       Foreground="#3498DB" 
+            <TextBlock x:Name="TxtWillkommen"
+                       Text="Willkommen!"
+                       FontSize="48"
+                       FontWeight="Bold"
+                       Foreground="#3498DB"
                        HorizontalAlignment="Center"/>
+
             <TextBlock Text="Hier siehst du deine Bibliotheks-Übersicht." 
                        FontSize="24" 
                        Foreground="#7F8C8D" 
