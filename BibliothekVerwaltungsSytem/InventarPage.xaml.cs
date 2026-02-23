@@ -13,10 +13,8 @@ namespace BibliothekVerwaltungsSytem
 
         private void LoadInventar()
         {
-            // Daten aus der Datenbank laden
-            var ausleihen = Database.LoadUserInventar();
-            
-            // An DataGrid binden
+            // Bücher des eingeloggten Users laden (kein hardcoded 'user' mehr)
+            var ausleihen = Database.LoadUserInventar(Session.CurrentUser!.UserId);
             dgBuecher.ItemsSource = ausleihen;
         }
 

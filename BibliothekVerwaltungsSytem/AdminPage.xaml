@@ -5,11 +5,189 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:BibliothekVerwaltungsSytem"
       mc:Ignorable="d"
-      Title="AdminPage" Height="450" Width="800">
+      Title="AdminPage">
+
     <Grid Background="#F8F9FA">
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Admin-Panel" FontSize="48" FontWeight="Bold" Foreground="#E74C3C" HorizontalAlignment="Center"/>
-            <TextBlock Text="Verwalte Bücher und User." FontSize="24" Foreground="#7F8C8D" HorizontalAlignment="Center" Margin="0,20,0,0"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Tab-Navigation -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#BDC3C7" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+
+                <Button Content="USER HINZUFÜGEN"
+                        Width="200" Height="50"
+                        FontSize="14" FontWeight="Bold"
+                        Background="#E74C3C" Foreground="White"
+                        BorderThickness="0" Margin="0,0,4,0"
+                        Cursor="Hand"
+                        Click="BtnTabUserHinzufuegen_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Content="ALLE USER"
+                        Width="200" Height="50"
+                        FontSize="14" FontWeight="SemiBold"
+                        Background="#ECF0F1" Foreground="#7F8C8D"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="BtnTabAlleUser_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+        <!-- Formular: Neuen User erstellen -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center" Width="500" Margin="0,30,0,40">
+                <Border Background="White" CornerRadius="10" Padding="30">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                    </Border.Effect>
+                    <StackPanel>
+
+                        <TextBlock Text="Neuen User erstellen"
+                                   FontSize="22" FontWeight="Bold"
+                                   Foreground="#2C3E50" Margin="0,0,0,20"/>
+
+                        <!-- Vorname -->
+                        <TextBlock Text="Vorname" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtVorname" FontSize="14" Padding="10,8"
+                                 Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- Nachname -->
+                        <TextBlock Text="Nachname" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtNachname" FontSize="14" Padding="10,8"
+                                 Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- Username -->
+                        <TextBlock Text="Benutzername" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtUsername" FontSize="14" Padding="10,8"
+                                 Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- E-Mail -->
+                        <TextBlock Text="E-Mail" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtEmail" FontSize="14" Padding="10,8"
+                                 Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <!-- Passwort -->
+                        <TextBlock Text="Passwort" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <PasswordBox x:Name="TxtPasswort" FontSize="14" Padding="10,8"
+                                     Margin="0,0,0,14" BorderBrush="#D5D8DC" BorderThickness="1"/>
+
+                        <!-- Rolle -->
+                        <TextBlock Text="Rolle" FontSize="13" Foreground="#7F8C8D" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="CmbRolle" FontSize="14" Padding="10,8"
+                                  Margin="0,0,0,24" BorderBrush="#D5D8DC" SelectedIndex="0">
+                            <ComboBoxItem Content="user"/>
+                            <ComboBoxItem Content="admin"/>
+                        </ComboBox>
+
+                        <!-- Feedback -->
+                        <TextBlock x:Name="TxtFeedback"
+                                   FontSize="13" TextWrapping="Wrap"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,12"
+                                   Visibility="Collapsed"/>
+
+                        <!-- Button -->
+                        <Button Content="User erstellen"
+                                FontSize="15" FontWeight="Bold"
+                                Foreground="White"
+                                BorderThickness="0" Padding="0,12"
+                                Cursor="Hand"
+                                Click="BtnUserErstellen_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E74C3C"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#C0392B"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
     </Grid>
 </Page>
