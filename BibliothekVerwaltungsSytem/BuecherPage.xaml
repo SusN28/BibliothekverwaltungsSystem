@@ -1,0 +1,237 @@
+﻿<Page x:Class="BibliothekVerwaltungsSytem.BuecherPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:BibliothekVerwaltungsSytem"
+      mc:Ignorable="d"
+      Title="BuecherPage">
+
+    <Grid Background="#F8F9FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Tab-Navigation -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#BDC3C7" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+
+                <Button Content="DEIN INVENTAR"
+                        Width="180" Height="50" FontSize="14" FontWeight="SemiBold"
+                        Background="#ECF0F1" Foreground="#7F8C8D"
+                        BorderThickness="0" Margin="0,0,4,0" Cursor="Hand"
+                        Click="BtnInventar_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Content="SUCHE"
+                        Width="180" Height="50" FontSize="14" FontWeight="SemiBold"
+                        Background="#ECF0F1" Foreground="#7F8C8D"
+                        BorderThickness="0" Margin="0,0,4,0" Cursor="Hand"
+                        Click="BtnSuche_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Content="BUECHER AUSLEIHEN"
+                        Width="200" Height="50" FontSize="14" FontWeight="Bold"
+                        Background="#3498DB" Foreground="White"
+                        BorderThickness="0" Cursor="Hand"
+                        Click="BtnBuecher_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+        <!-- Suchbox -->
+        <Border Grid.Row="1"
+                Background="White" BorderBrush="#E1E8ED" BorderThickness="0"
+                CornerRadius="12" Margin="40,30,40,40" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect Color="#3498DB" Direction="270" ShadowDepth="0" BlurRadius="20" Opacity="0.2"/>
+            </Border.Effect>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="#3498DB"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <TextBox x:Name="SearchTextBox"
+                         FontSize="18" FontFamily="Segoe UI" FontWeight="Medium"
+                         Foreground="#2C3E50" Background="Transparent"
+                         BorderThickness="0" Padding="28,22,70,22"
+                         VerticalContentAlignment="Center"
+                         TextChanged="SearchTextBox_TextChanged"
+                         CaretBrush="#3498DB">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <TextBlock Text="Suche nach Titel, Autor oder ISBN..."
+                           FontSize="18" FontFamily="Segoe UI" FontWeight="Medium"
+                           Foreground="#95A5A6" Padding="28,22,70,22"
+                           VerticalAlignment="Center" IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsFocused, ElementName=SearchTextBox}" Value="False"/>
+                                        <Condition Binding="{Binding Text.Length, ElementName=SearchTextBox}" Value="0"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <Border HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Width="48" Height="48" Margin="0,0,20,0"
+                        Background="#ECF0F1" CornerRadius="24">
+                    <TextBlock Text="&#128269;" FontSize="22" Foreground="#3498DB"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFocused, ElementName=SearchTextBox}" Value="True">
+                                    <Setter Property="Background" Value="#3498DB"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- DataGrid -->
+        <Border Grid.Row="2" Margin="40,0,40,40">
+            <DataGrid x:Name="BuecherDataGrid"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#ECF0F1"
+                      BorderThickness="0"
+                      Background="Transparent"
+                      RowBackground="White"
+                      AlternatingRowBackground="#FAFBFC"
+                      HeadersVisibility="Column">
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#3498DB"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Padding" Value="16,12"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Titel"        Binding="{Binding Titel}"            Width="2.5*"/>
+                    <DataGridTextColumn Header="Autor"        Binding="{Binding AutorName}"        Width="1.8*"/>
+                    <DataGridTextColumn Header="Kategorie"    Binding="{Binding KategorieName}"    Width="1.2*"/>
+                    <DataGridTextColumn Header="Jahr"         Binding="{Binding Erscheinungsjahr}" Width="0.6*"/>
+                    <DataGridTextColumn Header="Verlag"       Binding="{Binding Verlag}"           Width="1.2*"/>
+                    <DataGridTextColumn Header="Verfuegbar"   Binding="{Binding Verfuegbar}"       Width="0.8*"/>
+
+                    <!-- Ausleihen-Spalte -->
+                    <DataGridTemplateColumn Header="" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button FontSize="13" FontWeight="SemiBold"
+                                        Foreground="White" BorderThickness="0"
+                                        Padding="12,6" Cursor="Hand"
+                                        Tag="{Binding BuchId}"
+                                        Click="BtnAusleihen_Click">
+                                    <!-- Button ausgegraut wenn nicht verfuegbar -->
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Content" Value="Ausleihen"/>
+                                            <Setter Property="Background" Value="#3498DB"/>
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Verfuegbar}" Value="0">
+                                                    <Setter Property="Background" Value="#BDC3C7"/>
+                                                    <Setter Property="Content" Value="Vergriffen"/>
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#2980B9"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+
+            </DataGrid>
+        </Border>
+
+    </Grid>
+</Page>
