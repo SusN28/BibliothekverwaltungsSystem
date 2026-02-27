@@ -84,5 +84,8 @@ namespace BibliothekVerwaltungsSytem
             }
             return ergebnisse;
         }
+        private void BtnBuecher_Click(object sender, RoutedEventArgs e)
+            => NavigationService?.Navigate(new BuecherPage());
+
     }
 }

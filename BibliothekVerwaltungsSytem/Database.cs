@@ -163,7 +163,7 @@ namespace BibliothekVerwaltungsSytem
         }
 
         // ──────────────────────────────────────────────────────────────
-        // DB-VERBINDUNGSTEST (unverändert)
+        // DB-VERBINDUNGSTEST 
         // ──────────────────────────────────────────────────────────────
 
         public static bool TestConnection()
@@ -548,6 +548,110 @@ public static LoginResult DeleteBuch(int buchId)
         return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
     }
 }
+
+
+/// <summary>
+/// Laedt alle Buecher mit mindestens 1 verfuegbarem Exemplar.
+/// </summary>
+public static ObservableCollection<BuchInfo> LoadVerfuegbareBuecher()
+{
+    var liste = new ObservableCollection<BuchInfo>();
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(@"
+            SELECT b.buch_id, b.titel, IFNULL(b.isbn,'') AS isbn,
+                   b.autor_id,
+                   CONCAT(a.vorname, ' ', a.nachname) AS autor_name,
+                   b.kategorie_id,
+                   IFNULL(k.name,'') AS kategorie_name,
+                   IFNULL(b.erscheinungsjahr,'') AS erscheinungsjahr,
+                   IFNULL(b.verlag,'') AS verlag,
+                   IFNULL(b.seitenzahl,'') AS seitenzahl,
+                   IFNULL(b.sprache,'Deutsch') AS sprache,
+                   b.anzahl_exemplare, b.verfuegbar,
+                   IFNULL(b.beschreibung,'') AS beschreibung
+            FROM buecher b
+            JOIN autoren a ON b.autor_id = a.autor_id
+            LEFT JOIN kategorien k ON b.kategorie_id = k.kategorie_id
+            ORDER BY b.titel", connection);
+
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            liste.Add(new BuchInfo
+            {
+                BuchId           = reader.GetInt32("buch_id"),
+                Titel            = reader.GetString("titel"),
+                Isbn             = reader.GetString("isbn"),
+                AutorId          = reader.GetInt32("autor_id"),
+                AutorName        = reader.GetString("autor_name"),
+                KategorieId      = reader.IsDBNull(reader.GetOrdinal("kategorie_id"))
+                                   ? null : reader.GetInt32("kategorie_id"),
+                KategorieName    = reader.GetString("kategorie_name"),
+                Erscheinungsjahr = reader.GetString("erscheinungsjahr"),
+                Verlag           = reader.GetString("verlag"),
+                Seitenzahl       = reader.GetString("seitenzahl"),
+                Sprache          = reader.GetString("sprache"),
+                AnzahlExemplare  = reader.GetInt32("anzahl_exemplare"),
+                Verfuegbar       = reader.GetInt32("verfuegbar"),
+                Beschreibung     = reader.GetString("beschreibung")
+            });
+        }
+    }
+    catch (MySqlException ex)
+    {
+        MessageBox.Show($"Fehler: {ex.Message}", "Fehler",
+            MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+    return liste;
+}
+
+/// <summary>
+/// Erstellt eine neue Ausleihe und reduziert verfuegbar um 1.
+/// </summary>
+public static LoginResult BuchAusleihen(int buchId, int userId, DateTime von, DateTime bis)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        // Sicherheitscheck: noch verfuegbar?
+        using var checkCmd = new MySqlCommand(
+            "SELECT verfuegbar FROM buecher WHERE buch_id = @buchId", connection);
+        checkCmd.Parameters.AddWithValue("@buchId", buchId);
+        int verfuegbar = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+        if (verfuegbar < 1)
+            return new LoginResult { Success = false, Error = "Dieses Buch ist aktuell nicht verfuegbar." };
+
+        // Ausleihe eintragen
+        using var insertCmd = new MySqlCommand(@"
+            INSERT INTO ausleihen (buch_id, user_id, ausgeliehen_am, rueckgabe_bis, status)
+            VALUES (@buchId, @userId, @von, @bis, 'aktiv')", connection);
+
+        insertCmd.Parameters.AddWithValue("@buchId", buchId);
+        insertCmd.Parameters.AddWithValue("@userId", userId);
+        insertCmd.Parameters.AddWithValue("@von",    von.ToString("yyyy-MM-dd"));
+        insertCmd.Parameters.AddWithValue("@bis",    bis.ToString("yyyy-MM-dd"));
+        insertCmd.ExecuteNonQuery();
+
+        // Verfuegbar -1
+        using var updateCmd = new MySqlCommand(
+            "UPDATE buecher SET verfuegbar = verfuegbar - 1 WHERE buch_id = @buchId", connection);
+        updateCmd.Parameters.AddWithValue("@buchId", buchId);
+        updateCmd.ExecuteNonQuery();
+
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
 
         
 

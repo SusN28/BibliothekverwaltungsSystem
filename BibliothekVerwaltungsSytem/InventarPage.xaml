@@ -68,6 +68,26 @@
                         </Style>
                     </Button.Style>
                 </Button>
+                <Button Content="BUECHER AUSLEIHEN"
+                        Width="200" Height="50" FontSize="14" FontWeight="SemiBold"
+                        Background="#ECF0F1" Foreground="#7F8C8D"
+                        BorderThickness="0" Margin="4,0,0,0" Cursor="Hand"
+                        Click="BtnBuecher_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
             </StackPanel>
         </Border>
 
