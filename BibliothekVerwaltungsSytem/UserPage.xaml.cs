@@ -1,22 +1,37 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace BibliothekVerwaltungsSytem
+namespace BibliothekVerwaltungsSytem;
+
+public partial class UserPage : Page
 {
-    public partial class UserPage : Page
+    public UserPage()
     {
-        public UserPage()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            // Vorname und Nachname aus der Session laden
-            if (Session.CurrentUser != null)
-                TxtWillkommen.Text = $"Willkommen, {Session.CurrentUser.Vorname} {Session.CurrentUser.Nachname}!";
-        }
-
-        private void WeiterButton_Click(object sender, RoutedEventArgs e)
+        if (Session.CurrentUser != null)
         {
-            NavigationService?.Navigate(new InventarPage());
+            TxtWillkommen.Text = $"Willkommen, {Session.CurrentUser.Vorname} {Session.CurrentUser.Nachname}!";
+            PruefeUeberfaelligeBuecher();
         }
     }
+
+    private void PruefeUeberfaelligeBuecher()
+    {
+        var alleAusleihen = Database.LoadAusleihenVonUser(Session.CurrentUser!.UserId);
+
+        var ueberfaellig = alleAusleihen
+            .Where(a => a.IstUeberfaellig)
+            .ToList();
+
+        if (ueberfaellig.Count == 0) return;
+
+        // Warnung anzeigen
+        ListeUeberfaellig.ItemsSource = ueberfaellig;
+        PanelUeberfaellig.Visibility  = Visibility.Visible;
+    }
+
+    private void WeiterButton_Click(object sender, RoutedEventArgs e)
+        => NavigationService?.Navigate(new InventarPage());
 }

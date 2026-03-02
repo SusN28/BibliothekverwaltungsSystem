@@ -1,33 +1,94 @@
 ﻿<Page x:Class="BibliothekVerwaltungsSytem.UserPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:BibliothekVerwaltungsSytem"
       mc:Ignorable="d"
       Title="UserPage">
 
     <Grid Background="#F8F9FA">
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="800">
+
+            <!-- Willkommen -->
             <TextBlock x:Name="TxtWillkommen"
                        Text="Willkommen!"
-                       FontSize="48"
-                       FontWeight="Bold"
+                       FontSize="48" FontWeight="Bold"
                        Foreground="#3498DB"
                        HorizontalAlignment="Center"/>
 
-            <TextBlock Text="Hier siehst du deine Bibliotheks-Übersicht." 
-                       FontSize="24" 
-                       Foreground="#7F8C8D" 
-                       HorizontalAlignment="Center" 
+            <TextBlock Text="Hier siehst du deine Bibliotheks-Übersicht."
+                       FontSize="24" Foreground="#7F8C8D"
+                       HorizontalAlignment="Center"
                        Margin="0,20,0,40"/>
-            <Button Content="Weiter" 
-                    Width="160" 
-                    Height="48" 
-                    FontSize="18"
-                    FontWeight="SemiBold"
-                    Background="#3498DB"
-                    Foreground="White"
+
+            <!-- Warnung: Ueberfaellige Buecher -->
+            <Border x:Name="PanelUeberfaellig"
+                    Background="#FDECEA"
+                    BorderBrush="#E74C3C"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="24,20"
+                    Margin="0,0,0,30"
+                    Visibility="Collapsed">
+                <StackPanel>
+
+                    <!-- Titel -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="&#9888;"
+                                   FontSize="22" Foreground="#E74C3C"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBlock Text="Ueberfaellige Ausleihen"
+                                   FontSize="18" FontWeight="Bold"
+                                   Foreground="#C0392B" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Bitte gib die folgenden Bücher so schnell wie möglich zurück:"
+                               FontSize="13" Foreground="#C0392B" Margin="0,0,0,12"/>
+
+                    <!-- Liste der ueberfaelligen Buecher -->
+                    <ItemsControl x:Name="ListeUeberfaellig">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White" CornerRadius="6"
+                                        Padding="14,10" Margin="0,0,0,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Titel}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="#2C3E50"/>
+                                            <TextBlock Text="{Binding Autor}"
+                                                       FontSize="12" Foreground="#7F8C8D"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                            <TextBlock Text="Faellig seit:"
+                                                       FontSize="11" Foreground="#7F8C8D"
+                                                       HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding RueckgabeBis}"
+                                                       FontSize="13" FontWeight="Bold"
+                                                       Foreground="#E74C3C"
+                                                       HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Border>
+
+            <!-- Weiter Button -->
+            <Button Content="Weiter"
+                    Width="160" Height="48"
+                    FontSize="18" FontWeight="SemiBold"
+                    Background="#3498DB" Foreground="White"
                     BorderThickness="0"
                     Click="WeiterButton_Click"
                     Cursor="Hand">
@@ -36,16 +97,21 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="6">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="6">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2980B9"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </Button.Style>
             </Button>
+
         </StackPanel>
     </Grid>
 </Page>

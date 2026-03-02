@@ -8,11 +8,22 @@ namespace BibliothekVerwaltungsSytem;
 public partial class BuecherPage : Page
 {
     private ObservableCollection<Database.BuchInfo> _alleBuecher = new();
+    private bool _hatUeberfaellige = false;
 
     public BuecherPage()
     {
         InitializeComponent();
+        PruefeUeberfaellige();
         LadeBuecher();
+    }
+
+    private void PruefeUeberfaellige()
+    {
+        var ausleihen = Database.LoadAusleihenVonUser(Session.CurrentUser!.UserId);
+        _hatUeberfaellige = ausleihen.Any(a => a.IstUeberfaellig);
+
+        if (_hatUeberfaellige)
+            PanelGesperrt.Visibility = Visibility.Visible;
     }
 
     private void LadeBuecher()
@@ -42,6 +53,17 @@ public partial class BuecherPage : Page
     // ── Ausleihen ──────────────────────────────────────────
     private void BtnAusleihen_Click(object sender, RoutedEventArgs e)
     {
+        // Gesperrt wenn ueberfaellige Buecher vorhanden
+        if (_hatUeberfaellige)
+        {
+            MessageBox.Show(
+                "Du hast noch überfällige Bücher.\nBitte gib diese zuerst zurück.",
+                "Ausleihen gesperrt",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
         int buchId = (int)((Button)sender).Tag;
         var buch = _alleBuecher.FirstOrDefault(b => b.BuchId == buchId);
         if (buch == null) return;
@@ -49,7 +71,6 @@ public partial class BuecherPage : Page
         var fenster = new AusleihenWindow(buch);
         fenster.ShowDialog();
 
-        // Liste neu laden damit Verfuegbar-Zahl aktuell ist
         if (fenster.Ausgeliehen)
             LadeBuecher();
     }

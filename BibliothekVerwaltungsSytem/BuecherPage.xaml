@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -81,8 +82,25 @@
             </StackPanel>
         </Border>
 
+        <!-- Sperrhinweis -->
+        <Border x:Name="PanelGesperrt"
+                Grid.Row="1"
+                Background="#FDECEA"
+                BorderBrush="#E74C3C"
+                BorderThickness="0,0,0,2"
+                Padding="40,14"
+                Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#9888;"
+                           FontSize="18" Foreground="#E74C3C"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock FontSize="14" Foreground="#C0392B" VerticalAlignment="Center"
+                           Text="Du hast ueberfaellige Bücher. Bitte gib diese zuerst zurück, bevor du neue ausleihen kannst."/>
+            </StackPanel>
+        </Border>
+
         <!-- Suchbox -->
-        <Border Grid.Row="1"
+        <Border Grid.Row="2"
                 Background="White" BorderBrush="#E1E8ED" BorderThickness="0"
                 CornerRadius="12" Margin="40,30,40,40" Padding="4">
             <Border.Effect>
@@ -157,7 +175,7 @@
         </Border>
 
         <!-- DataGrid -->
-        <Border Grid.Row="2" Margin="40,0,40,40">
+        <Border Grid.Row="3" Margin="40,0,40,40">
             <DataGrid x:Name="BuecherDataGrid"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -182,12 +200,12 @@
                 </DataGrid.ColumnHeaderStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Titel"        Binding="{Binding Titel}"            Width="2.5*"/>
-                    <DataGridTextColumn Header="Autor"        Binding="{Binding AutorName}"        Width="1.8*"/>
-                    <DataGridTextColumn Header="Kategorie"    Binding="{Binding KategorieName}"    Width="1.2*"/>
-                    <DataGridTextColumn Header="Jahr"         Binding="{Binding Erscheinungsjahr}" Width="0.6*"/>
-                    <DataGridTextColumn Header="Verlag"       Binding="{Binding Verlag}"           Width="1.2*"/>
-                    <DataGridTextColumn Header="Verfuegbar"   Binding="{Binding Verfuegbar}"       Width="0.8*"/>
+                    <DataGridTextColumn Header="Titel"      Binding="{Binding Titel}"            Width="2.5*"/>
+                    <DataGridTextColumn Header="Autor"      Binding="{Binding AutorName}"        Width="1.8*"/>
+                    <DataGridTextColumn Header="Kategorie"  Binding="{Binding KategorieName}"    Width="1.2*"/>
+                    <DataGridTextColumn Header="Jahr"       Binding="{Binding Erscheinungsjahr}" Width="0.6*"/>
+                    <DataGridTextColumn Header="Verlag"     Binding="{Binding Verlag}"           Width="1.2*"/>
+                    <DataGridTextColumn Header="Verfuegbar" Binding="{Binding Verfuegbar}"       Width="0.8*"/>
 
                     <!-- Ausleihen-Spalte -->
                     <DataGridTemplateColumn Header="" Width="120">
@@ -198,7 +216,6 @@
                                         Padding="12,6" Cursor="Hand"
                                         Tag="{Binding BuchId}"
                                         Click="BtnAusleihen_Click">
-                                    <!-- Button ausgegraut wenn nicht verfuegbar -->
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Content" Value="Ausleihen"/>

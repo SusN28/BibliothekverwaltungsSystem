@@ -653,6 +653,106 @@ public static LoginResult BuchAusleihen(int buchId, int userId, DateTime von, Da
 }
 
 
+// ── Model ──────────────────────────────────────────────────
+public class AusleiheInfo
+{
+    public int    AusleiheId     { get; set; }
+    public int    BuchId         { get; set; }
+    public string Titel          { get; set; } = "";
+    public string Autor          { get; set; } = "";
+    public string AusgeliehenAm  { get; set; } = "";
+    public string RueckgabeBis   { get; set; } = "";
+    public bool   IstUeberfaellig { get; set; }
+}
+
+// ── Methoden ───────────────────────────────────────────────
+
+/// <summary>
+/// Laedt alle aktiven Ausleihen eines bestimmten Users.
+/// </summary>
+public static ObservableCollection<AusleiheInfo> LoadAusleihenVonUser(int userId)
+{
+    var liste = new ObservableCollection<AusleiheInfo>();
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+        using var cmd = new MySqlCommand(@"
+            SELECT au.ausleihe_id, au.buch_id,
+                   b.titel,
+                   CONCAT(a.vorname, ' ', a.nachname) AS autor,
+                   DATE_FORMAT(au.ausgeliehen_am, '%d.%m.%Y') AS ausgeliehen_am,
+                   DATE_FORMAT(au.rueckgabe_bis,  '%d.%m.%Y') AS rueckgabe_bis,
+                   au.rueckgabe_bis AS rueckgabe_bis_raw
+            FROM ausleihen au
+            JOIN buecher b ON au.buch_id  = b.buch_id
+            JOIN autoren a ON b.autor_id  = a.autor_id
+            WHERE au.user_id = @userId
+              AND au.status IN ('aktiv', 'ueberfaellig')
+            ORDER BY au.rueckgabe_bis ASC", connection);
+
+        cmd.Parameters.AddWithValue("@userId", userId);
+
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            liste.Add(new AusleiheInfo
+            {
+                AusleiheId      = reader.GetInt32("ausleihe_id"),
+                BuchId          = reader.GetInt32("buch_id"),
+                Titel           = reader.GetString("titel"),
+                Autor           = reader.GetString("autor"),
+                AusgeliehenAm   = reader.GetString("ausgeliehen_am"),
+                RueckgabeBis    = reader.GetString("rueckgabe_bis"),
+                IstUeberfaellig = reader.GetDateTime("rueckgabe_bis_raw") < System.DateTime.Today
+            });
+        }
+    }
+    catch (MySqlException ex)
+    {
+        MessageBox.Show($"Fehler: {ex.Message}", "Fehler",
+            MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+    return liste;
+}
+
+/// <summary>
+/// Markiert eine Ausleihe als zurueckgegeben und erhoeht verfuegbar um 1.
+/// </summary>
+public static LoginResult BuchZurueckgeben(int ausleiheId, int buchId)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        // Ausleihe als zurueckgegeben markieren
+        using var updateAusleihe = new MySqlCommand(@"
+            UPDATE ausleihen
+            SET status            = 'zurueckgegeben',
+                zurueckgegeben_am = CURDATE()
+            WHERE ausleihe_id = @ausleiheId", connection);
+        updateAusleihe.Parameters.AddWithValue("@ausleiheId", ausleiheId);
+        updateAusleihe.ExecuteNonQuery();
+
+        // Verfuegbar + 1
+        using var updateBuch = new MySqlCommand(@"
+            UPDATE buecher
+            SET verfuegbar = verfuegbar + 1
+            WHERE buch_id = @buchId", connection);
+        updateBuch.Parameters.AddWithValue("@buchId", buchId);
+        updateBuch.ExecuteNonQuery();
+
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
+
+
         
 
         /// <summary>

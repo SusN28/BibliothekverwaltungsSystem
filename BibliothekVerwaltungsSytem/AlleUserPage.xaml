@@ -190,6 +190,24 @@
     <DataGridTemplateColumn.CellTemplate>
         <DataTemplate>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                
+                <Button Content="&#128218;"
+                        FontSize="16" Background="Transparent"
+                        BorderThickness="0" Cursor="Hand"
+                        ToolTip="Ausleihen verwalten"
+                        Margin="0,0,8,0"
+                        Tag="{Binding UserId}"
+                        Click="BtnAusleihenVerwalten_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="#E74C3C"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <!-- Bearbeiten -->
                 <Button Content="&#9998;"
@@ -211,6 +229,8 @@
                         </Style>
                     </Button.Style>
                 </Button>
+                
+                
 
             
                 

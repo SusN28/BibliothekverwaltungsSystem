@@ -80,6 +80,17 @@ public partial class AlleUserPage : Page
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+    
+    private void BtnAusleihenVerwalten_Click(object sender, RoutedEventArgs e)
+    {
+        int userId = (int)((Button)sender).Tag;
+        var user = _alleUser.FirstOrDefault(u => u.UserId == userId);
+        if (user == null) return;
+
+        var fenster = new UserAusleihenWindow(user);
+        fenster.ShowDialog();
+    }
+
 
     // ── Tab-Navigation ─────────────────────────────────────
     private void BtnTabUserHinzufuegen_Click(object sender, RoutedEventArgs e)
