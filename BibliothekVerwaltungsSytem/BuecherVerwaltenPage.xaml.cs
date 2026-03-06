@@ -98,6 +98,14 @@ public partial class BuecherVerwaltenPage : Page
 
     private void BtnTabBuecher_Click(object sender, RoutedEventArgs e)
     {
-        // Schon auf der Seite
+        
     }
+    
+    private void BtnAutorHinzufuegen_Click(object sender, RoutedEventArgs e)
+    {
+        var fenster = new AutorHinzufuegenWindow();
+        fenster.ShowDialog();
+        // Autorenliste im BuchBearbeitenWindow wird beim nächsten Öffnen automatisch neu geladen
+    }
+
 }

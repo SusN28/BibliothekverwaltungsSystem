@@ -751,6 +751,37 @@ public static LoginResult BuchZurueckgeben(int ausleiheId, int buchId)
     }
 }
 
+/// <summary>
+/// Fuegt einen neuen Autor in die autoren-Tabelle ein.
+/// </summary>
+public static LoginResult CreateAutor(string vorname, string nachname,
+    string geburtsjahr, string nationalitaet, string biografie)
+{
+    try
+    {
+        using var connection = new MySqlConnection(connectionString);
+        connection.Open();
+
+        using var cmd = new MySqlCommand(@"
+            INSERT INTO autoren (vorname, nachname, geburtsjahr, nationalitaet, biografie)
+            VALUES (@vorname, @nachname, @geburtsjahr, @nationalitaet, @biografie)",
+            connection);
+
+        cmd.Parameters.AddWithValue("@vorname",      string.IsNullOrEmpty(vorname) ? DBNull.Value : vorname);
+        cmd.Parameters.AddWithValue("@nachname",     nachname);
+        cmd.Parameters.AddWithValue("@geburtsjahr",  string.IsNullOrEmpty(geburtsjahr) ? DBNull.Value : geburtsjahr);
+        cmd.Parameters.AddWithValue("@nationalitaet", string.IsNullOrEmpty(nationalitaet) ? DBNull.Value : nationalitaet);
+        cmd.Parameters.AddWithValue("@biografie",    string.IsNullOrEmpty(biografie) ? DBNull.Value : biografie);
+
+        cmd.ExecuteNonQuery();
+        return new LoginResult { Success = true };
+    }
+    catch (MySqlException ex)
+    {
+        return new LoginResult { Success = false, Error = $"Datenbankfehler: {ex.Message}" };
+    }
+}
+
 
 
         
