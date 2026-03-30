@@ -31,9 +31,3 @@ Eine Desktop-Anwendung zur Verwaltung einer Bibliothek, entwickelt mit **WPF (.N
 - .NET 6 oder höher
 - MySQL-Server (Zugangsdaten in `Database.cs` anpassen)
 - NuGet-Pakete: `BCrypt.Net-Next`, `MySql.Data`
-
-## Installation
-
-1. Repository klonen:
-   ```bash
-   git clone https://github.com/DEIN-USERNAME/bibliotheksverwaltungssystem.git
